@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Cumpleaños</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out, opacity 1s ease-in-out;
+            opacity: 1;
+        }
+
+        .boton {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #contenedor-imagen {
+            position: absolute;
+            bottom: 0%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        #imagen-you {
+            max-width: 400px;
+            height: auto;
+            display: block;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #imagen-fc {
+            position: fixed;
+            top: -10%; /* Un poco más arriba del centro */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0; /* Comienza invisible */
+            transition: opacity 1s ease-in-out;
+            z-index: 10;
+        }
+
+        #letras {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgb(0, 0, 0);
+            font-size: 1.5em;
+            text-align: center;
+            max-width: 90%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .flor {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            animation: flotar 5s infinite ease-in-out;
+        }
+
+        .corazon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            animation: flotar 5s infinite ease-in-out;
+        }
+
+        .flor {
+            background-size: cover;
+        }
+
+        .corazon {
+            background-size: cover;
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        /* Glow effect with light blue or green color */
+        .glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+
+        .glow div {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(195, 248, 255, 0.8); /* Celeste color */
+            box-shadow: 0 0 25px rgba(195, 248, 255, 0.8); /* Strong glow effect */
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        .glow-top-left { top: 0; left: 0; }
+        .glow-top-right { top: 0; right: 0; }
+        .glow-bottom-left { bottom: 0; left: 0; }
+        .glow-bottom-right { bottom: 0; right: 0; }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(0, 188, 212, 0.8); /* Increased shadow */
+            }
+            100% {
+                transform: scale(1.5);
+                box-shadow: 0 0 30px rgba(0, 188, 212, 1); /* Stronger glow */
+            }
+        }
+    </style>
+</head>
+<body id="main-body">
+    <button id="boton" class="boton">???</button>
+    <div id="contenedor-imagen">
+        <img id="imagen-you" src="img/you.png" alt="Imagen You">
+    </div>
+    <div id="imagen-fc" style="display:none">
+        <img src="img/fc.png" alt="Feliz Cumpleaños" id="fc-img">
+    </div>
+    <div id="letras"></div>
+
+    <!-- Glow effect -->
+    <div id="glow" class="glow">
+        <div class="glow-top-left"></div>
+        <div class="glow-top-right"></div>
+        <div class="glow-bottom-left"></div>
+        <div class="glow-bottom-right"></div>
+    </div>
+
+    <script>
+        const boton = document.getElementById("boton");
+        const letrasDiv = document.getElementById("letras");
+        const body = document.getElementById("main-body");
+        const audioConfeti = new Audio("audio/confeti.mp3");
+        const audioFondo = new Audio("audio/cancion_fondo.mp3");
+        audioConfeti.volume = 0.2;
+        audioFondo.volume = 0.2;
+    
+        const letras = [
+            { time: 18, text: "The day I saw you in the corner", duration: 2.5 },
+            { time: 22, text: "With your dirty shoe", duration: 3 },
+            { time: 27, text: "Then you put your apron on", duration: 1.5 },
+            { time: 30, text: "And there's a long line waiting for you", duration: 3 },
+            { time: 35, text: "'What can I do for you?'", duration: 1 },
+            { time: 37, text: "She said in front of my face oh I couldn't breath", duration: 5 },
+            { time: 44, text: "That sweet smile in your face", duration: 1 },
+            { time: 46, text: "But I know that you're just tryna be nice to me", duration: 4 },
+            { time: 52, text: "Daisy, Daisy", duration: 1.5 },
+            { time: 55, text: "You gave me a hazy feeling lately", duration: 3.5 },
+            { time: 60, text: "Can you stay with me?", duration: 1.5 },
+            { time: 63, text: "Along with the sweetest latte you came", duration: 4 },
+            { time: 68, text: "Through", duration: 2.5 },
+            { time: 71, text: "Stay by my side", duration: 2 },
+            { time: 74, text: "No more feeling blue", duration: 4.5 },
+            { time: 80, text: "You make things right", duration: 2 },
+            { time: 83, text: "Daisy, I love you", duration: 2 },
+            { time: 86, text: "Sittin on my table far", duration: 2 },
+            { time: 89, text: "But my eyes got fixed on you", duration: 2 },
+            { time: 94, text: "I've only seen you twice in my life", duration: 2 },
+            { time: 97, text: "But my mind is all over you", duration: 3 },
+            { time: 102, text: "And when you came up to me", duration: 1 },
+            { time: 104, text: "With a coffee in your hands oh I really see it", duration: 5 },
+            { time: 111, text: "That you were meant for me", duration: 1 },
+            { time: 113, text: "But I didn't have the guts to ask your IG", duration: 3 },
+            { time: 118.5, text: "Daisy, Daisy", duration: 1.5 },
+            { time: 121, text: "You gave me a hazy feeling lately", duration: 3.5 },
+            { time: 127, text: "Can you stay with me?", duration: 1.5 },
+            { time: 130, text: "Along with the sweetest latte you came", duration: 4 },
+            { time: 135, text: "Through", duration: 2.5 },
+            { time: 138, text: "Stay by my side", duration: 2 },
+            { time: 142, text: "No more feeling blue", duration: 4.5 },
+            { time: 146, text: "You make things right", duration: 2 },
+            { time: 149, text: "Daisy, I love you", duration: 2 },
+        ];
+    
+        let flores = [];  // Array para almacenar las flores
+        let corazones = [];  // Array para almacenar los corazones
+    
+        function mostrarLetras() {
+            let index = 0;
+            setInterval(() => {
+                const currentTime = audioFondo.currentTime;
+                if (index < letras.length && currentTime >= letras[index].time) {
+                    letrasDiv.textContent = letras[index].text;
+                    letrasDiv.style.opacity = 1;
+    
+                    setTimeout(() => {
+                        letrasDiv.style.opacity = 0;
+                    }, letras[index].duration * 1000);
+    
+                    index++;
+                }
+            }, 100);
+        }
+    
+        function crearElemento(tipo, imagen) {
+            if (tipo === "flor" && flores.length >= 10) {
+                eliminarAleatorio(flores);  // Eliminar una flor aleatoria si hay más de 10
+            } else if (tipo === "corazon" && corazones.length >= 10) {
+                eliminarAleatorio(corazones);  // Eliminar un corazón aleatorio si hay más de 10
+            }
+    
+            const elemento = document.createElement("div");
+            elemento.classList.add(tipo);
+            elemento.style.backgroundImage = `url(${imagen})`;
+    
+            // Posición aleatoria en la pantalla
+            const posX = Math.random() * (window.innerWidth - 50);
+            const posY = Math.random() * (window.innerHeight - 50);
+    
+            elemento.style.left = `${posX}px`;
+            elemento.style.top = `${posY}px`;
+    
+            document.body.appendChild(elemento);
+    
+            // Almacenar el elemento creado en el array correspondiente
+            if (tipo === "flor") {
+                flores.push(elemento);
+            } else if (tipo === "corazon") {
+                corazones.push(elemento);
+            }
+        }
+    
+        // Función para eliminar un elemento aleatorio
+        function eliminarAleatorio(array) {
+            const index = Math.floor(Math.random() * array.length);
+            const elemento = array[index];
+            array.splice(index, 1);  // Elimina el elemento del array
+            elemento.remove();  // Elimina el elemento del DOM
+        }
+    
+        boton.addEventListener("click", () => {
+            boton.style.display = "none";
+            audioConfeti.play();
+            startConfetti();
+    
+            // Cambiar el fondo con animación
+            body.style.opacity = 0; // Comienza el fondo invisible
+            setTimeout(() => {
+                body.style.backgroundImage = "url('img/fondo.png')";
+                body.style.opacity = 1; // Aparece con animación de opacidad
+            }, 500);
+    
+            const imagenYou = document.getElementById('imagen-you');
+            imagenYou.style.opacity = 1; // Hace aparecer la imagen de "you" con opacidad
+    
+            const imagenFC = document.getElementById('imagen-fc');
+            imagenFC.style.display = "block"; // Hace aparecer la imagen de "fc" con opacidad
+            setTimeout(() => {
+                imagenFC.style.opacity = 1;
+            }, 500);
+    
+            setTimeout(() => {
+                audioFondo.play();
+                mostrarLetras();
+            }, 1000);
+    
+            // Intervalo con BPM 115 (aproximadamente cada 0.521 segundos)
+            const bpmInterval = 60 / 115 * 1000;
+            setInterval(() => {
+                crearElemento("flor", "img/flor.png"); // Cambia la imagen según lo necesites
+                crearElemento("corazon", "img/corazon.png"); // Cambia la imagen según lo necesites
+            }, bpmInterval);
+    
+            // Mostrar el glow en las esquinas con animación BPM
+            const glow = document.getElementById("glow");
+            glow.style.display = "block";
+            setInterval(() => {
+                glow.style.opacity = glow.style.opacity === "1" ? "0.8" : "1";
+            }, bpmInterval);
+        });
+    
+        function startConfetti() {
+            const canvas = document.createElement("canvas");
+            canvas.width = window.innerWidth; // Ancho de la pantalla
+            canvas.height = window.innerHeight; // Altura de la pantalla
+            canvas.style.position = "fixed"; // Fijado en la pantalla
+            canvas.style.top = 0;
+            canvas.style.left = 0;
+            canvas.style.zIndex = 100; // Asegura que esté encima de otros elementos
+            document.body.appendChild(canvas);
+    
+            const confetti = window.confetti || (window.confetti = {});
+    
+            const myConfetti = confetti.create(canvas, {
+                resize: true,
+                useWorker: true,
+            });
+    
+            myConfetti({
+                particleCount: 400, // Más partículas
+                spread: 360, // Cobertura completa de la pantalla
+                startVelocity: 60, // Velocidad inicial más alta
+                gravity: 0.9, // Caída más lenta
+                origin: { x: 0.5, y: 0.5 }, // Explosión desde el centro
+                colors: ["#ff4081", "#ffffff", "#ffd700", "#00e676", "#2979ff"],
+            });
+    
+            setTimeout(() => {
+                canvas.remove(); // Eliminar el lienzo después de 4 segundos
+            }, 4000);
+        }
+    </script>    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</body>
+</html>
